@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KanyaRashi — Premium Web Studio</title>
+  <meta name="description" content="KanyaRashi — A team of 5 next-gen builders. AI, creativity, and code to deliver exceptional web experiences.">
+  <!-- Performance hints -->
+  <meta name="theme-color" content="#080808">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preload critical font -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap"></noscript>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Drone zoom ── */
+    @keyframes droneZoom {
+      0%  { opacity:0; transform:scale(3) translateY(-20px); filter:blur(20px); }
+      60% { filter:blur(0); }
+      100%{ opacity:1; transform:scale(1) translateY(0); filter:blur(0); }
+    }
+
+    /* ── KR logo draw ── */
+    .kr-logo-svg .k-path{ stroke-dasharray:300; stroke-dashoffset:300; animation:drawK 2s cubic-bezier(0.16,1,0.3,1) 1s forwards; }
+    @keyframes drawK{ to{ stroke-dashoffset:0; } }
+
+    /* ══════════════════════════════
+       FIX 1 — RASHI: single clean color, no ghost
+       ══════════════════════════════ */
+    .hero-title{ position:relative; }
+    .hero-title .line1{ display:block; color:var(--text); }
+    .hero-title .line2{
+      display:block;
+      color:var(--accent);
+      -webkit-text-stroke:0;
+      opacity:0;
+      transform:translateY(20px);
+      animation:rashiReveal 0.9s cubic-bezier(0.16,1,0.3,1) 1.4s forwards;
+    }
+    @keyframes rashiReveal{
+      0%  { opacity:0; transform:translateY(20px); }
+      100%{ opacity:1; transform:translateY(0); }
+    }
+
+    /* ── Glitch (loader only) ── */
+    .glitch{ position:relative; }
+    .glitch::before,.glitch::after{ content:attr(data-text); position:absolute; left:0; top:0; font-family:inherit; font-size:inherit; letter-spacing:inherit; }
+    .glitch::before{ color:#ff6b35; animation:glitch1 4s infinite; clip-path:polygon(0 0,100% 0,100% 35%,0 35%); }
+    .glitch::after { color:#7c3aed; animation:glitch2 4s infinite; clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%); }
+    @keyframes glitch1{ 0%,90%,100%{transform:translate(0);opacity:0} 91%{transform:translate(-3px,2px);opacity:.8} 93%{transform:translate(3px,-2px);opacity:.8} 95%{transform:translate(-2px,1px);opacity:.8} }
+    @keyframes glitch2{ 0%,85%,100%{transform:translate(0);opacity:0} 86%{transform:translate(3px,-1px);opacity:.8} 88%{transform:translate(-3px,2px);opacity:.8} }
+
+    /* ── Particles ── */
+    .particle{ position:absolute; border-radius:50%; pointer-events:none; animation:floatUp linear infinite; opacity:.3; }
+    @keyframes floatUp{ 0%{transform:translateY(0) rotate(0deg);opacity:0} 10%{opacity:.3} 90%{opacity:.3} 100%{transform:translateY(-100vh) rotate(720deg);opacity:0} }
+
+  /* ── Explore drone-zoom (unused, kept for reference) ── */
+  .explore-entry{ opacity:1; transform:none; filter:none; }
+
+    /* ══════════════════════════════
+       FIX 2 — Stats clean layout
+       ══════════════════════════════ */
+    .hero-stats{
+      display:flex; gap:0; margin-top:56px; justify-content:center;
+      border:1px solid var(--border); border-radius:16px; overflow:hidden;
+      max-width:640px; margin-left:auto; margin-right:auto;
+    }
+    .stat{ flex:1; text-align:center; padding:24px 16px; border-right:1px solid var(--border); }
+    .stat:last-child{ border-right:none; }
+    .stat-num{ font-family:var(--font-display); font-size:42px; color:var(--accent); line-height:1; }
+    .stat-label{ font-family:var(--font-light); font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-top:6px; }
+    /* Hide old scroll hint */
+    .hero-scroll{ display:none !important; }
+
+    /* ══════════════════════════════
+       FIX 3 — ALL orbit icon tooltips
+       ══════════════════════════════ */
+    .orbit-icon{ position:relative; display:flex; align-items:center; justify-content:center; }
+    .orbit-icon .tip{
+      position:absolute; bottom:-28px; left:50%; transform:translateX(-50%);
+      font-family:var(--font-light); font-size:10px; letter-spacing:1px;
+      color:var(--accent); white-space:nowrap; background:rgba(0,0,0,.85);
+      padding:3px 8px; border-radius:4px; opacity:0; transition:opacity .3s;
+      pointer-events:none; z-index:50;
+    }
+    .orbit-icon:hover .tip{ opacity:1; }
+    .orbit-icon:hover{ z-index:30; }
+
+    /* ══════════════════════════════
+       FIX 4 — Skills typing panel
+       ══════════════════════════════ */
+    .skills-desc-panel{
+      max-width:700px; margin:32px auto 0; min-height:90px;
+      font-family:var(--font-light); font-size:clamp(15px,2vw,19px);
+      color:var(--text-muted); line-height:1.8; text-align:center;
+    }
+    .typed-cursor{
+      display:inline-block; width:2px; height:1.1em;
+      background:var(--accent); vertical-align:middle;
+      animation:blink .7s step-end infinite; margin-left:2px;
+    }
+    @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ══════════════════════════════
+       TEAM HUB — V1 restored
+       ══════════════════════════════ */
+    .team-hub{ position:relative; width:600px; height:600px; margin:0 auto 100px; display:flex; align-items:center; justify-content:center; }
+    /* V1 dashed orbit ring */
+    .team-orbit{ position:absolute; border:1px dashed rgba(200,255,0,.1); border-radius:50%; width:420px; height:420px; animation:teamspin 40s linear infinite; }
+    @keyframes teamspin{ from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    /* V1 member avatars — fixed absolute positions */
+    .member-avatar{ position:absolute; width:80px; height:80px; border-radius:50%; border:2px solid var(--border); overflow:hidden; cursor:none; transition:all .4s cubic-bezier(0.16,1,0.3,1); top:50%; left:50%; }
+    .member-avatar img{ width:100%; height:100%; object-fit:cover; filter:grayscale(30%); transition:filter .3s; }
+    .member-avatar:hover{ border-color:var(--accent); transform:scale(1.2); box-shadow:0 0 30px rgba(200,255,0,.3); z-index:10; }
+    .member-avatar:hover img{ filter:grayscale(0%); }
+    .member-avatar .member-name-tip{ position:absolute; bottom:-30px; left:50%; transform:translateX(-50%); font-family:var(--font-light); font-size:10px; letter-spacing:2px; color:var(--accent); white-space:nowrap; opacity:0; transition:opacity .3s; }
+    .member-avatar:hover .member-name-tip{ opacity:1; }
+    /* V1 positions */
+    .member-avatar[data-pos="0"] { transform:translate(-50%,-50%) translateY(-210px); }
+    .member-avatar[data-pos="1"] { transform:translate(-50%,-50%) rotate(72deg) translateY(-210px) rotate(-72deg); }
+    .member-avatar[data-pos="2"] { transform:translate(-50%,-50%) rotate(144deg) translateY(-210px) rotate(-144deg); }
+    .member-avatar[data-pos="3"] { transform:translate(-50%,-50%) rotate(216deg) translateY(-210px) rotate(-216deg); }
+    .member-avatar[data-pos="4"] { transform:translate(-50%,-50%) rotate(288deg) translateY(-210px) rotate(-288deg); }
+
+    /* ══════════════════════════════
+       FIX 5 — ind-style detail photo ring
+       ══════════════════════════════ */
+    .detail-photo-wrap{
+      position:relative; width:220px; height:220px; margin-bottom:32px;
+    }
+    .detail-photo-wrap::before,.detail-photo-wrap::after{
+      content:''; position:absolute; border-radius:50%; border:2px solid transparent; inset:0;
+    }
+    .detail-photo-wrap::before{ border-top-color:var(--accent); border-right-color:var(--accent); animation:spinRingA 3s linear infinite; }
+    .detail-photo-wrap::after { border-bottom-color:rgba(200,255,0,.3); border-left-color:rgba(200,255,0,.3); animation:spinRingA 5s linear infinite reverse; inset:6px; }
+    .detail-photo{ width:100%; height:100%; border-radius:50%; overflow:hidden; border:3px solid var(--accent); box-shadow:0 0 60px rgba(200,255,0,.2); }
+    .detail-photo img{ width:100%; height:100%; object-fit:cover; }
+    .detail-num { font-family:var(--font-light); font-size:12px; letter-spacing:4px; color:var(--accent); margin-bottom:12px; }
+    .detail-name{ font-family:var(--font-display); font-size:clamp(50px,7vw,90px); line-height:.9; margin-bottom:12px; }
+    .detail-role{ font-family:var(--font-light); font-size:15px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-bottom:24px; }
+    .detail-bio { font-family:var(--font-light); font-size:15px; color:var(--text-muted); line-height:1.8; }
+
+    /* ══════════════════════════════
+       FIX 6 — Compact flip cards
+       ══════════════════════════════ */
+    .team-cards-v2{
+      display:flex; flex-wrap:wrap; justify-content:center;
+      gap:24px; max-width:1100px; margin:0 auto; padding:0 20px;
+    }
+    .member-flip-card{
+      width:180px; background:var(--surface2);
+      border:1px solid var(--border); border-radius:20px;
+      padding:24px 16px; text-align:center; cursor:none;
+      transition:all .4s cubic-bezier(0.16,1,0.3,1); position:relative; overflow:hidden;
+    }
+    .member-flip-card::before{ content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(200,255,0,.06),transparent); opacity:0; transition:opacity .3s; }
+    .member-flip-card:hover{ transform:translateY(-8px); border-color:rgba(200,255,0,.35); }
+    .member-flip-card:hover::before{ opacity:1; }
+    .flip-photo{ width:80px; height:80px; border-radius:50%; overflow:hidden; border:2px solid var(--accent); margin:0 auto 14px; }
+    .flip-photo img{ width:100%; height:100%; object-fit:cover; }
+    .flip-letter{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--accent); }
+    .flip-name{ font-family:var(--font-body); font-size:16px; font-weight:700; margin-bottom:4px; }
+    .flip-role{ font-family:var(--font-light); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; }
+    .flip-btn{
+      display:inline-block; padding:8px 16px;
+      background:transparent; border:1px solid var(--accent); border-radius:100px;
+      font-family:var(--font-light); font-size:11px; letter-spacing:2px;
+      text-transform:uppercase; color:var(--accent); cursor:none; transition:all .3s;
+    }
+    .flip-btn:hover{ background:var(--accent); color:#000; }
+
+    /* Detail overlay */
+    #member-detail{ position:fixed; inset:0; z-index:5000; display:none; opacity:0; transition:opacity .4s; }
+    #member-detail.active{ display:flex; opacity:1; }
+    .detail-overlay{ position:absolute; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(10px); }
+    .detail-panel{ position:relative; z-index:1; width:100%; height:100%; display:grid; grid-template-columns:1fr 1fr; overflow:auto; }
+    .detail-left{ background:var(--surface); padding:80px 60px; display:flex; flex-direction:column; justify-content:center; border-right:1px solid var(--border); }
+    .detail-right{ padding:80px 60px; display:flex; flex-direction:column; justify-content:center; gap:20px; overflow-y:auto; }
+    .detail-back{ position:absolute; top:32px; left:32px; display:flex; align-items:center; gap:8px; font-family:var(--font-light); font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); cursor:none; background:none; border:none; transition:color .3s; z-index:10; }
+    .detail-back:hover{ color:var(--accent); }
+    .detail-skills-title{ font-family:var(--font-light); font-size:11px; letter-spacing:5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px; }
+    .skill-card{ background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:20px 24px; cursor:none; transition:all .3s; position:relative; overflow:hidden; }
+    .skill-card:hover{ border-color:var(--accent); transform:translateX(8px); }
+    .skill-card::after{ content:attr(data-level); position:absolute; right:24px; top:50%; transform:translateY(-50%); font-family:var(--font-display); font-size:28px; color:var(--accent); opacity:0; transition:opacity .3s; }
+    .skill-card:hover::after{ opacity:1; }
+    .skill-card-icon{ font-size:24px; margin-bottom:8px; }
+    .skill-card-name{ font-family:var(--font-body); font-size:16px; font-weight:600; margin-bottom:4px; }
+    .skill-card-desc{ font-family:var(--font-light); font-size:13px; color:var(--text-muted); }
+    .skill-bar { height:2px; background:rgba(255,255,255,.08); border-radius:2px; margin-top:12px; overflow:hidden; }
+    .skill-fill{ height:100%; background:var(--accent); border-radius:2px; width:0; transition:width 1s cubic-bezier(0.16,1,0.3,1); }
+  </style>
+</head>
+<body class="no-scroll">
+
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <!-- ═══ LOADER ═══ -->
+  <div id="loader">
+    <div class="loader-line"></div>
+    <div class="loader-text">
+      <div class="loader-hello">Hello,</div>
+      <div class="loader-welcome">Welcome to the portfolio of</div>
+      <div class="loader-portfolio">Team</div>
+      <div class="loader-brand glitch" data-text="KANYARASHI">KANYARASHI</div>
+      <div class="loader-tagline">New-age builders · Web · AI · Design</div>
+    </div>
+    <div class="loader-progress">
+      <span class="loader-num">000%</span>
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ═══ NAV ═══ -->
+  <nav>
+    <a href="#hero" class="nav-logo">
+      <div class="nav-logo-icon">K</div>
+      <span class="nav-logo-text">KANYARASHI</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#explore">Explore</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#demo">Work</a></li>
+      <li><a href="#tools">Stack</a></li>
+      <li><a href="mailto:kanyarashi.group@gmail.com" class="nav-cta">Hire Us</a></li>
+    </ul>
+    <!-- Mobile hamburger -->
+    <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile full-screen menu -->
+  <div class="nav-mobile-menu" id="mobile-menu">
+    <a href="#explore" onclick="closeMobileMenu()">Explore</a>
+    <a href="#skills"  onclick="closeMobileMenu()">Skills</a>
+    <a href="#team"    onclick="closeMobileMenu()">Team</a>
+    <a href="#demo"    onclick="closeMobileMenu()">Work</a>
+    <a href="#tools"   onclick="closeMobileMenu()">Stack</a>
+    <a href="mailto:kanyarashi.group@gmail.com" class="mobile-cta">Hire Us</a>
+  </div>
+
+  <!-- ═══ HERO ═══ -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div id="particles" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Brave Project · KanyaRashi Studio · Est. 2026</div>
+
+      <!-- FIX 1: RASHI single clean green color, no ghost -->
+      <h1 class="hero-title">
+        <span class="line1">KANYA</span>
+        <span class="line2">RASHI</span>
+      </h1>
+
+      <p class="hero-sub">
+        We are five next-gen builders who integrate AI, creativity, and clean code to craft digital experiences that set you apart.
+      </p>
+
+      <div class="hero-cta-group">
+        <button class="btn-primary" onclick="document.getElementById('explore').scrollIntoView({behavior:'smooth'})">
+          Explore Our Work
+        </button>
+      </div>
+
+      <!-- FIX 2: bordered stat grid, no overlap -->
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num" data-target="5"   data-suffix="">0</div><div class="stat-label">Builders</div></div>
+        <div class="stat"><div class="stat-num" data-target="90"  data-suffix="">0</div><div class="stat-label">Day Mission</div></div>
+        <div class="stat"><div class="stat-num" data-target="2"   data-suffix="L+">0</div><div class="stat-label">Revenue Goal</div></div>
+        <div class="stat"><div class="stat-num" data-target="100" data-suffix="%">0</div><div class="stat-label">Dedication</div></div>
+      </div>
+    </div>
+
+    <!-- hidden via CSS (FIX 2) -->
+    <div class="hero-scroll"><span>Scroll</span></div>
+
+    <!-- Marquee belt -->
+    <div class="marquee-wrap" style="position:absolute;bottom:0;left:0;right:0;margin:0;">
+      <div class="marquee">
+        <span class="marquee-item">WEB DEVELOPMENT</span><span class="marquee-item filled marquee-sep">★</span>
+        <span class="marquee-item">UI/UX DESIGN</span><span class="marquee-item filled marquee-sep">★</span>
+        <span class="marquee-item">AI INTEGRATION</span><span class="marquee-item filled marquee-sep">★</span>
+        <span class="marquee-item">BRAND IDENTITY</span><span class="marquee-item filled marquee-sep">★</span>
+        <span class="marquee-item">WEB DEVELOPMENT</span><span class="marquee-item filled marquee-sep">★</span>
+        <span class="marquee-item">UI/UX DESIGN</span><span class="marquee-item filled marquee-sep">★</span>
+        <span class="marquee-item">AI INTEGRATION</span><span class="marquee-item filled marquee-sep">★</span>
+        <span class="marquee-item">BRAND IDENTITY</span><span class="marquee-item filled marquee-sep">★</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ EXPLORE ═══ -->
+  <section id="explore">
+    <div class="explore-bg"></div>
+    <div class="explore-container">
+
+      <div class="explore-label reveal">Explore our work</div>
+
+      <div class="explore-title reveal">
+        <span class="our">EXPLORE</span>
+        <span class="portfolio">OUR</span>
+        <span class="our">PORTFOLIO</span>
+      </div>
+
+      <div class="orbit-system">
+        <div class="orbit-center">
+          <div class="orbit-center-text">KR<br>STUDIO</div>
+        </div>
+
+        <!-- Ring 1 — FIX 3: tooltip directly inside .orbit-icon, no nested span wrapper -->
+        <div class="orbit-ring orbit-ring-1">
+          <div class="orbit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#e34f26"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg>
+            <span class="tip">HTML5</span>
+          </div>
+          <div class="orbit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#1572b6"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.956-.81-.188-2.11h-2.61l.29 3.855L12 19.288l5.373-1.53L18.59 4.414z"/></svg>
+            <span class="tip">CSS3</span>
+          </div>
+          <div class="orbit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24"><rect width="24" height="24" rx="3" fill="#f7df1e"/><path d="M6.235 6.453h4.075v8.755c0 3.546-1.695 4.763-4.403 4.763-.647 0-1.497-.108-2.052-.27l.324-3.349c.377.135.863.27 1.404.27.81 0 1.053-.378 1.053-1.134V6.453zm7.237 8.647c.728.35 1.886.7 3.073.7 1.026 0 1.538-.404 1.538-.997 0-.593-.566-1.025-1.997-1.457-2.025-.647-3.4-1.7-3.4-3.546 0-2.052 1.753-3.614 4.611-3.614 1.403 0 2.43.27 3.188.62l-.647 3.104c-.485-.215-1.322-.485-2.51-.485-.97 0-1.457.404-1.457.917 0 .593.647.862 2.213 1.377 2.16.7 3.187 1.78 3.187 3.654 0 1.969-1.457 3.72-4.88 3.72-1.404 0-2.807-.377-3.508-.727l.59-3.266z" fill="#000"/></svg>
+            <span class="tip">JavaScript</span>
+          </div>
+        </div>
+
+        <!-- Ring 2 — FIX 3 -->
+        <div class="orbit-ring orbit-ring-2">
+          <div class="orbit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 24c2.208 0 4-1.792 4-4v-4H8c-2.208 0-4 1.792-4 4s1.792 4 4 4z" fill="#0acf83"/><path d="M4 12c0-2.208 1.792-4 4-4h4v8H8c-2.208 0-4-1.792-4-4z" fill="#a259ff"/><path d="M4 4c0-2.208 1.792-4 4-4h4v8H8C5.792 8 4 6.208 4 4z" fill="#f24e1e"/><path d="M12 0h4c2.208 0 4 1.792 4 4s-1.792 4-4 4h-4V0z" fill="#ff7262"/><path d="M20 12c0 2.208-1.792 4-4 4s-4-1.792-4-4 1.792-4 4-4 4 1.792 4 4z" fill="#1abcfe"/></svg>
+            <span class="tip">Figma</span>
+          </div>
+          <div class="orbit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#61dafb"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61dafb" stroke-width="1.2"/><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61dafb" stroke-width="1.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61dafb" stroke-width="1.2" transform="rotate(120 12 12)"/></svg>
+            <span class="tip">React</span>
+          </div>
+          <div class="orbit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#339933"><path d="M11.998 24a.918.918 0 01-.46-.124l-1.463-.866c-.219-.124-.112-.168-.04-.193.292-.1.35-.124.66-.3.032-.02.074-.012.106.008l1.124.666a.146.146 0 00.136 0l4.383-2.53a.138.138 0 00.068-.12V8.512a.14.14 0 00-.068-.12l-4.383-2.524a.135.135 0 00-.136 0L7.54 8.392a.14.14 0 00-.068.12v5.053c0 .05.026.096.068.12l1.2.693c.651.326 1.05-.058 1.05-.44V9.04c0-.07.057-.126.126-.126h.548c.07 0 .126.056.126.126v4.898c0 .861-.469 1.355-1.285 1.355-.25 0-.448 0-1-.274l-1.148-.66a.918.918 0 01-.46-.8V8.512c0-.33.175-.636.46-.8l4.383-2.53a.96.96 0 01.92 0l4.382 2.53c.285.164.46.47.46.8v5.056c0 .33-.175.636-.46.8l-4.382 2.53a.918.918 0 01-.46.124z"/></svg>
+            <span class="tip">Node.js</span>
+          </div>
+        </div>
+
+        <div class="orbit-ring orbit-ring-3" style="pointer-events:none;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FIRST REVEAL ═══ -->
+  <section id="first-reveal" style="min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:120px 60px;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 30% 50%,rgba(200,255,0,.06) 0%,transparent 60%)"></div>
+    <div class="first-reveal-grid" style="max-width:1100px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;position:relative;">
+      <div>
+        <span class="reveal" style="font-family:var(--font-light);font-size:12px;letter-spacing:8px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:24px;">Our Mission</span>
+        <h2 class="reveal" style="font-family:var(--font-display);font-size:clamp(60px,9vw,120px);line-height:.9;margin-bottom:32px;">KANYA<br><span style="color:var(--accent)">RASHI</span></h2>
+        <p class="reveal" style="font-family:var(--font-light);font-size:17px;color:var(--text-muted);line-height:1.8;margin-bottom:32px;">We are a team of five passionate individuals on a 90-day mission to earn ₹2 Lakhs through the BRAVE college initiative — building premium websites for real clients.</p>
+        <p class="reveal" style="font-family:var(--font-light);font-size:17px;color:var(--text-muted);line-height:1.8;">From AI-powered automations to stunning visual identities — we handle the full digital stack, so you can focus on your business.</p>
+      </div>
+      <div class="reveal">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;font-family:monospace;font-size:14px;line-height:1.8;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,var(--accent),var(--accent3));"></div>
+          <div style="display:flex;gap:6px;margin-bottom:20px;"><div style="width:10px;height:10px;border-radius:50%;background:#ff5f57;"></div><div style="width:10px;height:10px;border-radius:50%;background:#ffbd2e;"></div><div style="width:10px;height:10px;border-radius:50%;background:#28c840;"></div></div>
+          <div style="color:#7c3aed;">const</div>
+          <div style="color:var(--accent);">&nbsp;team = <span style="color:#fff;">{</span></div>
+          <div style="color:var(--text-muted);">&nbsp;&nbsp;name: <span style="color:#ff6b35;">"KanyaRashi"</span>,</div>
+          <div style="color:var(--text-muted);">&nbsp;&nbsp;members: <span style="color:var(--accent);">5</span>,</div>
+          <div style="color:var(--text-muted);">&nbsp;&nbsp;mission: <span style="color:#ff6b35;">"₹2L in 90 days"</span>,</div>
+          <div style="color:var(--text-muted);">&nbsp;&nbsp;stack: <span style="color:#fff;">[</span><span style="color:#ff6b35;">"React","Node","AI","Figma"</span><span style="color:#fff;">]</span>,</div>
+          <div style="color:var(--text-muted);">&nbsp;&nbsp;vibe: <span style="color:#ff6b35;">"Chill. Focused. 🔥"</span></div>
+          <div style="color:#fff;">};</div>
+          <div style="margin-top:12px;color:var(--text-muted);">// Build. Deploy. Grow.</div>
+          <div style="color:var(--accent);">team.<span style="color:#fff;">deliver()</span>; <span style="color:#444;">// 🚀</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SKILLS — FIX 4 ═══ -->
+  <section id="skills">
+    <div class="skills-pinned">
+      <div class="skills-bg-text">SKILLS</div>
+      <div class="skills-content">
+        <span class="skills-intro-label reveal">What We Do</span>
+        <h2 class="skills-title reveal">
+          <span style="color:var(--text-muted);">OUR</span><br>
+          <span style="color:var(--accent);">SKILLS</span>
+        </h2>
+
+        <div class="skills-tags reveal" id="skill-tags">
+          <span class="skill-tag active" data-skill="webdev">Web Development</span>
+          <span class="skill-tag" data-skill="uxui">UI/UX Design</span>
+          <span class="skill-tag" data-skill="ai">AI Integration</span>
+          <span class="skill-tag" data-skill="react">React / Next.js</span>
+          <span class="skill-tag" data-skill="figma">Figma</span>
+          <span class="skill-tag" data-skill="node">Node.js</span>
+          <span class="skill-tag" data-skill="brand">Brand Identity</span>
+          <span class="skill-tag" data-skill="seo">SEO</span>
+          <span class="skill-tag" data-skill="prompt">Prompt Engineering</span>
+          <span class="skill-tag" data-skill="anim">Animation</span>
+          <span class="skill-tag" data-skill="deploy">Deployment</span>
+          <span class="skill-tag" data-skill="consult">Consulting</span>
+        </div>
+
+        <!-- FIX 4: typing description panel -->
+        <div class="skills-desc-panel reveal">
+          <span id="skills-desc-text">We are new-age builders. We integrate AI, creativity, and code to simplify website development — delivering enterprise-grade results at startup speed.</span>
+          <span class="typed-cursor" id="skills-cursor" style="display:none;"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TEAM — V1 layout, all 5 real photos ═══ -->
+  <section id="team">
+    <div class="team-bg"></div>
+    <div class="section-header">
+      <span class="section-eyebrow reveal">The Squad</span>
+      <h2 class="section-title reveal">MEET THE<br><span style="color:var(--accent);">TEAM</span></h2>
+    </div>
+
+    <!-- V1 team hub: static orbit ring + members at fixed positions -->
+    <div class="team-hub reveal">
+
+      <!-- Dashed orbit ring (rotates) -->
+      <div class="team-orbit"></div>
+
+      <!-- KR Logo center -->
+      <div class="kr-logo">
+        <div class="kr-logo-inner">
+          <svg class="kr-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="k-path" d="M20 15 L20 85 M20 50 L55 15 M20 50 L60 85" stroke="#c8ff00" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="65" cy="50" r="5" fill="#c8ff00" opacity="0.6"><animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/></circle>
+            <text x="68" y="38" font-family="Bebas Neue,sans-serif" font-size="20" fill="#c8ff00" opacity="0.7">R</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- V1 member avatars — fixed positions, real photos -->
+      <div class="member-avatar" data-pos="0" onclick="openMemberDetail('Omkar')" style="cursor:none;">
+        <img src="assets/omkar.png" alt="Omkar">
+        <span class="member-name-tip">Omkar</span>
+      </div>
+      <div class="member-avatar" data-pos="1" onclick="openMemberDetail('Revan')" style="cursor:none;">
+        <img loading="lazy" decoding="async" src="assets/revan.png" alt="Revan">
+        <span class="member-name-tip">Revan</span>
+      </div>
+      <div class="member-avatar" data-pos="2" onclick="openMemberDetail('Shiva Teja')" style="cursor:none;">
+        <img loading="lazy" decoding="async" src="assets/shiva_teja.png" alt="Shiva Teja">
+        <span class="member-name-tip">Shiva Teja</span>
+      </div>
+      <div class="member-avatar" data-pos="3" onclick="openMemberDetail('Yuva Teja')" style="cursor:none;">
+        <img loading="lazy" decoding="async" src="assets/yuva_teja.png" alt="Yuva Teja">
+        <span class="member-name-tip">Yuva Teja</span>
+      </div>
+      <div class="member-avatar" data-pos="4" onclick="openMemberDetail('Karthik')" style="cursor:none;">
+        <img loading="lazy" decoding="async" src="assets/karthik.jpg" alt="Karthik">
+        <span class="member-name-tip">Karthik</span>
+      </div>
+    </div>
+
+    <p class="reveal" style="text-align:center;font-family:var(--font-light);font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:60px;">
+      ↑ Click any member to view their profile &amp; skills
+    </p>
+
+    <!-- V1 team cards grid (restored, no flip cards) -->
+    <div class="team-cards">
+
+      <div class="team-card reveal" onclick="openMemberDetail('Omkar')">
+        <div class="card-photo"><img src="assets/omkar.png" alt="Omkar"></div>
+        <div class="card-num">01 / MEMBER</div>
+        <div class="card-name">Omkar</div>
+        <div class="card-role">Web Developer &amp; Graphic Designer</div>
+        <p class="card-desc">Full-stack developer with a designer's eye. Builds performant web experiences that look as good as they work.</p>
+        <div class="card-skills">
+          <span class="card-skill-badge">React</span>
+          <span class="card-skill-badge">Figma</span>
+          <span class="card-skill-badge">Node.js</span>
+        </div>
+        <button class="card-cta">View Profile <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+
+      <div class="team-card reveal" onclick="openMemberDetail('Revan')">
+        <div class="card-photo"><img loading="lazy" decoding="async" src="assets/revan.png" alt="Revan"></div>
+        <div class="card-num">02 / MEMBER</div>
+        <div class="card-name">Revan</div>
+        <div class="card-role">Software Architect</div>
+        <p class="card-desc">Architects scalable systems that power great products. Built on solid, future-proof foundations.</p>
+        <div class="card-skills">
+          <span class="card-skill-badge">AWS</span>
+          <span class="card-skill-badge">Docker</span>
+          <span class="card-skill-badge">System Design</span>
+        </div>
+        <button class="card-cta">View Profile <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+
+      <div class="team-card reveal" onclick="openMemberDetail('Shiva Teja')">
+        <div class="card-photo"><img loading="lazy" decoding="async" src="assets/shiva_teja.png" alt="Shiva Teja"></div>
+        <div class="card-num">03 / MEMBER</div>
+        <div class="card-name">Shiva Teja</div>
+        <div class="card-role">UI Designer</div>
+        <p class="card-desc">Crafts interfaces users fall in love with. Thoughtful, minimal, and deeply intentional visual solutions.</p>
+        <div class="card-skills">
+          <span class="card-skill-badge">Figma</span>
+          <span class="card-skill-badge">Prototyping</span>
+          <span class="card-skill-badge">Brand</span>
+        </div>
+        <button class="card-cta">View Profile <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+
+      <div class="team-card reveal" onclick="openMemberDetail('Yuva Teja')">
+        <div class="card-photo"><img loading="lazy" decoding="async" src="assets/yuva_teja.png" alt="Yuva Teja"></div>
+        <div class="card-num">04 / MEMBER</div>
+        <div class="card-name">Yuva Teja</div>
+        <div class="card-role">AI Prompt Engineer</div>
+        <p class="card-desc">At the frontier of AI-powered development. Harnesses LLMs and generative AI to supercharge team productivity.</p>
+        <div class="card-skills">
+          <span class="card-skill-badge">Claude AI</span>
+          <span class="card-skill-badge">GPT</span>
+          <span class="card-skill-badge">LangChain</span>
+        </div>
+        <button class="card-cta">View Profile <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+
+      <div class="team-card reveal" onclick="openMemberDetail('Karthik')">
+        <div class="card-photo"><img loading="lazy" decoding="async" src="assets/karthik.jpg" alt="Karthik"></div>
+        <div class="card-num">05 / MEMBER</div>
+        <div class="card-name">Karthik</div>
+        <div class="card-role">UX Researcher</div>
+        <p class="card-desc">Champions the user in every decision. Uncovers insights that shape products people actually want to use.</p>
+        <div class="card-skills">
+          <span class="card-skill-badge">User Research</span>
+          <span class="card-skill-badge">Analytics</span>
+          <span class="card-skill-badge">A/B Testing</span>
+        </div>
+        <button class="card-cta">View Profile <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ DEMO — live iframe ═══ -->
+  <section id="demo">
+    <span class="demo-label reveal">Our Work</span>
+    <h2 class="demo-title reveal">Look Into<br>Our <span style="color:var(--accent);">Demo</span><br>Design Site</h2>
+    <div class="demo-box reveal">
+      <div class="demo-url-bar">
+        <div class="demo-dots"><div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div></div>
+        <div class="demo-url">🔒 nexara-three.vercel.app</div>
+      </div>
+      <iframe
+        src="https://nexara-three.vercel.app"
+        style="width:100%;height:calc(100% - 44px);margin-top:44px;border:none;"
+        allow="fullscreen"
+        loading="lazy"
+        title="KanyaRashi Demo — Nexara">
+      </iframe>
+      <!-- Overlay: keeps custom cursor working; click to interact with iframe -->
+      <div class="demo-iframe-overlay" id="demoOverlay">
+        <span class="demo-iframe-hint">Click to interact</span>
+      </div>
+      <!-- Mobile fallback: tap-to-open card (shown on mobile via CSS) -->
+      <div class="demo-mobile-card">
+        <div class="demo-mobile-card__icon">🌐</div>
+        <div class="demo-mobile-card__title">NEXARA</div>
+        <div class="demo-mobile-card__url">nexara-three.vercel.app</div>
+        <a href="https://nexara-three.vercel.app" target="_blank" rel="noopener" class="demo-mobile-card__btn">
+          Open Demo Site ↗
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TOOLS ═══ -->
+  <section id="tools">
+    <div class="tools-header">
+      <span class="section-eyebrow reveal">Our Stack</span>
+      <h2 class="tools-title reveal">We Build With<br><span style="color:var(--accent);">The Best</span></h2>
+      <p class="tools-subtitle reveal">Industry-standard tools. Modern workflows. Exceptional results.</p>
+    </div>
+    <div class="tools-track-wrap">
+      <div class="tools-track">
+        <div class="tool-chip"><span class="tool-chip-icon">⚛️</span>React</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🔺</span>Next.js</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🎨</span>Figma</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🟡</span>JavaScript</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🎭</span>CSS3</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🌿</span>Node.js</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🔥</span>Firebase</div>
+        <div class="tool-chip"><span class="tool-chip-icon">☁️</span>AWS</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🤖</span>Claude AI</div>
+        <div class="tool-chip"><span class="tool-chip-icon">⚛️</span>React</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🔺</span>Next.js</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🎨</span>Figma</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🟡</span>JavaScript</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🎭</span>CSS3</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🌿</span>Node.js</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🔥</span>Firebase</div>
+        <div class="tool-chip"><span class="tool-chip-icon">☁️</span>AWS</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🤖</span>Claude AI</div>
+      </div>
+    </div>
+    <div class="tools-track-wrap" style="margin-top:16px;">
+      <div class="tools-track reverse">
+        <div class="tool-chip"><span class="tool-chip-icon">🐍</span>Python</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🐳</span>Docker</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🗃️</span>MongoDB</div>
+        <div class="tool-chip"><span class="tool-chip-icon">📱</span>Webflow</div>
+        <div class="tool-chip"><span class="tool-chip-icon">💜</span>Framer</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🔧</span>TypeScript</div>
+        <div class="tool-chip"><span class="tool-chip-icon">✨</span>GSAP</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🎯</span>Tailwind</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🚀</span>Vercel</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🐍</span>Python</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🐳</span>Docker</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🗃️</span>MongoDB</div>
+        <div class="tool-chip"><span class="tool-chip-icon">📱</span>Webflow</div>
+        <div class="tool-chip"><span class="tool-chip-icon">💜</span>Framer</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🔧</span>TypeScript</div>
+        <div class="tool-chip"><span class="tool-chip-icon">✨</span>GSAP</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🎯</span>Tailwind</div>
+        <div class="tool-chip"><span class="tool-chip-icon">🚀</span>Vercel</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ MEMBER DETAIL OVERLAY ═══ -->
+  <div id="member-detail">
+    <div class="detail-overlay"></div>
+    <div class="detail-panel">
+      <div class="detail-left">
+        <button class="detail-back" onclick="closeMemberDetail()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <!-- FIX 5: double spinning ring around photo -->
+        <div class="detail-photo-wrap">
+          <div class="detail-photo" id="detail-photo"></div>
+        </div>
+        <div class="detail-num"  id="detail-num">01 / MEMBER</div>
+        <div class="detail-name" id="detail-name">Name</div>
+        <div class="detail-role" id="detail-role">Role</div>
+        <p   class="detail-bio"  id="detail-bio">Bio.</p>
+      </div>
+      <div class="detail-right">
+        <div class="detail-skills-title">Skill Showcase</div>
+        <div id="detail-skills" style="display:flex;flex-direction:column;gap:16px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER — FIX 7 ═══ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">KR</div>
+        <p class="footer-tagline">Five builders. One mission. Premium digital experiences that grow your business — delivered in days, not months.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#explore">Portfolio</a></li>
+          <li><a href="#team">Team</a></li>
+          <li><a href="#demo">Work</a></li>
+          <li><a href="#tools">Stack</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact Us</div>
+        <div class="footer-contact">
+          <div class="footer-contact-item">
+            <span>✉️</span>
+            <a href="mailto:kanyarashi.group@gmail.com" style="color:rgba(255,255,255,.6);text-decoration:none;">kanyarashi.group@gmail.com</a>
+          </div>
+          <div class="footer-contact-item"><span>📍</span><span>Hyderabad, India</span></div>
+          <div class="footer-contact-item"><span>🎓</span><span>Brave Project — 2026</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 KanyaRashi. All rights reserved.</div>
+      <div class="footer-love">Made with <span class="heart">♥</span> by Team KanyaRashi</div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+  /* ── Particles — fewer on mobile ── */
+  (function(){
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) return; // skip particles on mobile for performance
+    const pc = document.getElementById('particles');
+    if (!pc) return;
+    for(let i=0;i<20;i++){
+      const p = document.createElement('div'); p.className='particle';
+      const s = Math.random()*4+1;
+      p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${Math.random()>.5?'#c8ff00':'#7c3aed'};animation-duration:${10+Math.random()*12}s;animation-delay:${Math.random()*5}s;`;
+      pc.appendChild(p);
+    }
+  })();
+
+  /* ── Explore section fade-in on scroll ── */
+  (function(){
+    const entry = document.querySelector('.explore-entry');
+    if(!entry) return;
+    new IntersectionObserver(e=>{ if(e[0].isIntersecting) entry.classList.add('zoomed-in'); },{threshold:.2}).observe(entry);
+  })();
+
+  /* ══════════════════════════════════════════
+     FIX 4 — Skill click → typing description
+  ══════════════════════════════════════════ */
+  const SKILL_DATA = {
+    webdev : 'We craft fast, modern websites from scratch — fully responsive, SEO-friendly, and built with clean code. From a simple landing page to a complex multi-page business site, we handle it all.',
+    uxui   : 'We design interfaces that are intuitive, beautiful, and conversion-optimised. From wireframes to polished Figma prototypes — every pixel is intentional and user-tested.',
+    ai     : 'We embed AI features directly into your product — chatbots, recommendation engines, auto-content generators, and workflow automation using the latest LLMs like Claude and GPT.',
+    react  : 'Our go-to stack for blazing-fast web apps. We build server-rendered, SEO-optimised React apps with Next.js — ensuring Lighthouse scores above 95.',
+    figma  : 'We use Figma to design complete design systems, interactive prototypes, and hand-off-ready mockups. Every asset, icon, and component is perfectly organised for your team.',
+    node   : 'We build robust REST APIs and backend services with Node.js and Express — handling authentication, databases, file uploads, and third-party integrations seamlessly.',
+    brand  : 'We create complete brand identities: logo design, typography, colour systems, and usage guidelines — giving your business a cohesive visual voice that stands out.',
+    seo    : 'We optimise your website to rank higher on Google — technical SEO, page speed, meta tags, structured data, and content strategy all handled by our team.',
+    prompt : 'We leverage advanced AI prompt engineering to automate content creation, code generation, and data analysis — cutting your development time by up to 60%.',
+    anim   : 'We add micro-interactions, scroll-triggered animations, and page transitions using CSS and GSAP — making your website feel alive and premium without hurting performance.',
+    deploy : 'We deploy on Vercel, Netlify, or AWS with CI/CD pipelines, custom domains, SSL certificates, and monitoring — fully production-ready from day one.',
+    consult: 'Not sure what you need? We audit your current site or idea and deliver a clear honest roadmap — tech stack recommendation, cost estimate, and realistic timeline included.',
+  };
+  const DEFAULT_TEXT = 'We are new-age builders. We integrate AI, creativity, and code to simplify website development — delivering enterprise-grade results at startup speed.';
+
+  let _typingTimer = null;
+  function typeText(text, speed){
+    speed = speed || 26;
+    const el  = document.getElementById('skills-desc-text');
+    const cur = document.getElementById('skills-cursor');
+    if(_typingTimer) clearInterval(_typingTimer);
+    el.textContent = '';
+    cur.style.display = 'inline-block';
+    let i = 0;
+    _typingTimer = setInterval(()=>{
+      el.textContent += text[i]; i++;
+      if(i >= text.length){ clearInterval(_typingTimer); _typingTimer=null; }
+    }, speed);
+  }
+
+  document.querySelectorAll('.skill-tag').forEach(tag=>{
+    tag.addEventListener('click', ()=>{
+      document.querySelectorAll('.skill-tag').forEach(t=>t.classList.remove('active'));
+      tag.classList.add('active');
+      const text = SKILL_DATA[tag.dataset.skill] || DEFAULT_TEXT;
+      typeText(text);
+    });
+  });
+  </script>
+  <script>
+    /* ── Mobile hamburger ── */
+    function closeMobileMenu() {
+      document.getElementById('mobile-menu').classList.remove('open');
+      document.getElementById('hamburger').classList.remove('open');
+      document.body.classList.remove('no-scroll');
+    }
+    document.getElementById('hamburger')?.addEventListener('click', () => {
+      const menu = document.getElementById('mobile-menu');
+      const btn  = document.getElementById('hamburger');
+      const open = menu.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      document.body.classList.toggle('no-scroll', open);
+    });
+
+    /* ── Demo iframe overlay — cursor fix ── */
+    (function() {
+      const overlay = document.getElementById('demoOverlay');
+      const demoBox = overlay ? overlay.closest('.demo-box') : null;
+      if (!overlay || !demoBox) return;
+      // Click overlay → let user interact with iframe
+      overlay.addEventListener('click', () => {
+        overlay.classList.add('active');
+      });
+      // Mouse leaves demo box → restore overlay so cursor is returned
+      demoBox.addEventListener('mouseleave', () => {
+        overlay.classList.remove('active');
+      });
+    })();
+  </script>
+</body>
+</html>
